@@ -256,6 +256,32 @@ export class InspectorView extends VBox implements ViewLocationResolver {
       infobar.setParentView(this);
       this.attachInfobar(infobar);
     }
+
+    if (Root.Runtime.Runtime.queryParam('mobile')) {
+        this.hideDevTools();
+        setTimeout(() => {
+          this.hideDevTools();
+        });
+    }
+  }
+
+  hideDevTools(): void {
+    if (this.ownerSplitWidget) {
+      this.ownerSplitWidget.sidebarElement().style.display = 'none';
+      this.ownerSplitWidget.resizerElement().style.display = 'none';
+      this.ownerSplitWidget.doLayout();
+    }
+  }
+
+  showDevTools(): void {
+    if (this.ownerSplitWidget) {
+      this.ownerSplitWidget.sidebarElement().style.display = 'flex';
+      this.ownerSplitWidget.resizerElement().style.display = 'flex';
+      this.ownerSplitWidget.doLayout();
+    }
+    setTimeout(() => {
+      this.tabbedPane.waitForTabElementUpdate();
+    })
   }
 
   static instance(opts: {

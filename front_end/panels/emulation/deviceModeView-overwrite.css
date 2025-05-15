@@ -1,0 +1,11 @@
+devtools-toolbar.main-toolbar {
+  visibility: hidden !important;
+}
+
+.device-mode-presets-container {
+  display: none !important;
+}
+
+.device-mode-resizer {
+  display: none !important;
+}

@@ -309,7 +309,7 @@ export class SplitWidget extends Common.ObjectWrapper.eventMixin<EventTypes, typ
     }
   }
 
-  resizerElement(): Element {
+  resizerElement(): HTMLElement {
     return this.resizerElementInternal;
   }
 

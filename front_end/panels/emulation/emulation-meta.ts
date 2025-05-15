@@ -183,14 +183,16 @@ Common.Settings.registerSettingExtension({
   tags: [i18nLazyString(UIStrings.device)],
 });
 
-UI.Toolbar.registerToolbarItem({
-  actionId: 'emulation.toggle-device-mode',
-  condition: Root.Runtime.conditions.canDock,
-  location: UI.Toolbar.ToolbarItemLocation.MAIN_TOOLBAR_LEFT,
-  order: 1,
-  loadItem: undefined,
-  separator: undefined,
-});
+if (!Root.Runtime.Runtime.queryParam('mobile')) {
+  UI.Toolbar.registerToolbarItem({
+    actionId: 'emulation.toggle-device-mode',
+    condition: Root.Runtime.conditions.canDock,
+    location: UI.Toolbar.ToolbarItemLocation.MAIN_TOOLBAR_LEFT,
+    order: 1,
+    loadItem: undefined,
+    separator: undefined,
+  });
+}
 
 Common.AppProvider.registerAppProvider({
   async loadAppProvider() {

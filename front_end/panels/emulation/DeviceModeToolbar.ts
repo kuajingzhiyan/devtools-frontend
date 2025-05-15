@@ -13,6 +13,7 @@ import * as EmulationModel from '../../models/emulation/emulation.js';
 import * as UI from '../../ui/legacy/legacy.js';
 import * as VisualLogging from '../../ui/visual_logging/visual_logging.js';
 import * as MobileThrottling from '../mobile_throttling/mobile_throttling.js';
+import * as Root from '../../core/root/root.js';
 
 import * as EmulationComponents from './components/components.js';
 
@@ -139,6 +140,10 @@ const UIStrings = {
    * @description A menu command in the Device Mode Toolbar that closes DevTools.
    */
   closeDevtools: 'Close DevTools',
+    /**
+   * @description A menu command in the Device Mode Toolbar that shows DevTools.
+   */
+    showDevtools: 'Show DevTools',
   /**
    * @description Title of the device selected in the Device Mode Toolbar. The 'response' device is
    * not a specific phone/tablet model but a virtual device that can change its height and width
@@ -518,11 +523,19 @@ export class DeviceModeToolbar {
     contextMenu.appendItemsAtLocation('deviceModeMenu');
     contextMenu.footerSection().appendItem(
         i18nString(UIStrings.resetToDefaults), this.reset.bind(this), {jslogContext: 'reset-to-defaults'});
-    contextMenu.footerSection().appendItem(
-        i18nString(UIStrings.closeDevtools),
-        Host.InspectorFrontendHost.InspectorFrontendHostInstance.closeWindow.bind(
-            Host.InspectorFrontendHost.InspectorFrontendHostInstance),
-        {jslogContext: 'close-dev-tools'});
+
+        if (Root.Runtime.Runtime.queryParam('mobile')) {
+          contextMenu.footerSection().appendItem(
+            i18nString(UIStrings.showDevtools),
+            this.showDevTools.bind(this),
+            { jslogContext: 'close-dev-tools' });
+        } else {
+          contextMenu.footerSection().appendItem(
+            i18nString(UIStrings.closeDevtools),
+            Host.InspectorFrontendHost.InspectorFrontendHostInstance.closeWindow.bind(
+                Host.InspectorFrontendHost.InspectorFrontendHostInstance),
+            {jslogContext: 'close-dev-tools'});
+        }
 
     function appendToggleItem(
         section: UI.ContextMenu.Section, setting: Common.Settings.Setting<unknown>, title1: string, title2: string,
@@ -536,6 +549,10 @@ export class DeviceModeToolbar {
       section.appendItem(
           isEnabled ? title1 : title2, setting.set.bind(setting, !setting.get()), {disabled, jslogContext});
     }
+  }
+
+  private showDevTools(): void {
+    UI.InspectorView.InspectorView.instance().showDevTools();
   }
 
   private reset(): void {

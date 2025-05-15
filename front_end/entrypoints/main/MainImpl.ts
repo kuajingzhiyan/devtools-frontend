@@ -154,6 +154,8 @@ export class MainImpl {
           resolve => Host.InspectorFrontendHost.InspectorFrontendHostInstance.getPreferences(resolve)),
     ]);
 
+    this.#mobileInit(prefs);
+
     console.timeStamp('Main._gotPreferences');
     this.#initializeGlobalsForLayoutTests();
     Object.assign(Root.Runtime.hostConfig, config);
@@ -179,6 +181,23 @@ export class MainImpl {
       }
     }
     void this.#createAppUI();
+  }
+
+  /** 移动端特殊处理 */
+  #mobileInit(prefs: Record<string, string>): void {
+    const isMobile = Root.Runtime.Runtime.queryParam('mobile');
+    if (isMobile) {
+      prefs["emulation.show-device-mode"] = "true";
+      prefs["currentDockState"] = "\"bottom\"";
+      prefs["InspectorView.splitViewState"] = "{\"vertical\":{\"size\":0},\"horizontal\":{\"size\":1}}";
+
+      let height = Number(Root.Runtime.Runtime.queryParam('height'));
+      let width = Number(Root.Runtime.Runtime.queryParam('width'));
+      if (height >0 && width >0) {
+        prefs["emulation.device-height"] = height + "";
+        prefs["emulation.device-width"] = width + "";
+      }
+    }
   }
 
   #initializeGlobalsForLayoutTests(): void {
@@ -808,7 +827,7 @@ export class MainMenuItem implements UI.Toolbar.Provider {
       UI.ARIAUtils.setLabel(dockItemElement, UIStrings.dockSide + UIStrings.dockSideNaviation);
       const [toggleDockSideShorcut] =
           UI.ShortcutRegistry.ShortcutRegistry.instance().shortcutsForAction('main.toggle-dock');
-
+      const isMobile = Root.Runtime.Runtime.queryParam('mobile');
       // clang-format off
       render(html`
         <span class="dockside-title"
@@ -816,7 +835,7 @@ export class MainMenuItem implements UI.Toolbar.Provider {
           ${i18nString(UIStrings.dockSide)}
         </span>
         <devtools-toolbar @mousedown=${(event: Event) => event.consume()}>
-          <devtools-button class="toolbar-button"
+          <devtools-button class=${isMobile ? 'toolbar-button hidden' : 'toolbar-button'}
                            jslog=${VisualLogging.toggle().track({click: true}).context('current-dock-state-undock')}
                            title=${i18nString(UIStrings.undockIntoSeparateWindow)}
                            aria-label=${i18nString(UIStrings.undockIntoSeparateWindow)}

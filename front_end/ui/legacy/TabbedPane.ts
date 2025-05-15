@@ -786,7 +786,7 @@ export class TabbedPane extends Common.ObjectWrapper.eventMixin<EventTypes, type
     this.tabsElement.style.setProperty('width', '2000px');
     const measuringTabElements = new Map<HTMLElement, TabbedPaneTab>();
     for (const tab of this.tabs) {
-      if (typeof tab.measuredWidth === 'number') {
+      if (tab.measuredWidth && typeof tab.measuredWidth === 'number') {
         continue;
       }
       const measuringTabElement = tab.createTabElement(/* measure */ true);

@@ -11,9 +11,11 @@ import type * as Protocol from '../../generated/protocol.js';
 import * as EmulationModel from '../../models/emulation/emulation.js';
 import * as UI from '../../ui/legacy/legacy.js';
 import * as VisualLogging from '../../ui/visual_logging/visual_logging.js';
+import * as Root from '../../core/root/root.js';
 
 import {DeviceModeToolbar} from './DeviceModeToolbar.js';
 import deviceModeViewStyles from './deviceModeView.css.js';
+import deviceModeViewOverwriteStyles from './deviceModeView-overwrite.css.js';
 import {MediaQueryInspector} from './MediaQueryInspector.js';
 
 const UIStrings = {
@@ -97,11 +99,16 @@ export class DeviceModeView extends UI.Widget.VBox {
   constructor() {
     super(true);
 
+    const isMobile = Root.Runtime.Runtime.queryParam('mobile');
     this.blockElementToWidth = new WeakMap();
 
     this.setMinimumSize(150, 150);
     this.element.classList.add('device-mode-view');
     this.registerRequiredCSS(deviceModeViewStyles);
+
+    if (isMobile) {
+      this.registerRequiredCSS(deviceModeViewOverwriteStyles);
+    }
 
     this.model = EmulationModel.DeviceModeModel.DeviceModeModel.instance();
     this.model.addEventListener(EmulationModel.DeviceModeModel.Events.UPDATED, this.updateUI, this);

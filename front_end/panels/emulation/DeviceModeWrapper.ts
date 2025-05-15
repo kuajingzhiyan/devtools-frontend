@@ -54,7 +54,9 @@ export class DeviceModeWrapper extends UI.Widget.VBox {
   }
 
   toggleDeviceMode(): void {
-    this.showDeviceModeSetting.set(!this.showDeviceModeSetting.get());
+    if (!Root.Runtime.Runtime.queryParam('mobile')) {
+      this.showDeviceModeSetting.set(!this.showDeviceModeSetting.get());
+    }
   }
 
   isDeviceModeOn(): boolean {
